@@ -133,15 +133,37 @@
                 <button
                     type="submit"
                     class="auth-button"
+                   
                 >
 
-                    Entrar
+                    Criar minha conta
 
                 </button>
 
+               
+
+
             </form>
 
+            <script>
 
+                function validarCadastro(event) {
+    event.preventDefault();
+
+    let email = document.getElementById('email').value;
+    let senha = document.getElementById('senha').value;
+
+    // Se algum dos campos estiver vazio, avisa o usuário
+    if (email === '' && senha === '') {
+        alert('Preencha todos os campos!');
+    } else {
+        // Se estiverem preenchidos, redireciona
+        window.location.href = 'index.html';
+    }
+}
+
+            </script>
+          
             <div class="auth-footer">
 
                 <p>
@@ -179,6 +201,31 @@
         </div>
 
     </footer>
+
+    <script>
+        function validarCadastro(event) {
+            // Impede que a página recarregue ao enviar o formulário
+            event.preventDefault();
+
+            // Pega os valores digitados nos inputs
+            let nome = document.getElementById('nome').value;
+            let email = document.getElementById('email').value;
+            let senha = document.getElementById('senha').value;
+            let confirmarSenha = document.getElementById('confirmar_senha').value;
+
+            // Exemplo de verificação simples se estão preenchidos e se as senhas coincidem
+            if (nome && email && senha && confirmarSenha) {
+                if (senha === confirmarSenha) {
+                    // Se tudo estiver correto, redireciona para o login
+                    window.location.href = 'login.html';
+                } else {
+                    alert('As senhas não coincidem!');
+                }
+            } else {
+                alert('Preencha todos os campos!');
+            }
+        }
+    </script>
 
 </body>
 

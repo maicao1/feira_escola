@@ -169,7 +169,7 @@ if __name__ == "__main__":
 #
 # PRÓXIMOS PASSOS DO BACK-END:
 #
-# 1 - CONECTAR O PYTHON AO MYSQL
+# 1 - CONECTAR O PYTHON AO MYSQL               (__________________________FEITO_________________________)
 #
 # Primeiro precisamos fazer a conexão entre o Flask e o banco
 # de dados MySQL que a equipe está desenvolvendo.
@@ -178,7 +178,7 @@ if __name__ == "__main__":
 # dados dos sebos escritos diretamente nesta lista do Python.
 #
 #
-# 2 - CRIAR E ORGANIZAR AS TABELAS DO BANCO
+# 2 - CRIAR E ORGANIZAR AS TABELAS DO BANCO (__________________________FEITO_________________________)
 #
 # Precisamos definir junto com a equipe quais informações serão
 # armazenadas no banco de dados.
@@ -194,7 +194,7 @@ if __name__ == "__main__":
 # do banco de dados que a equipe está fazendo.
 #
 #
-# 3 - BUSCAR OS SEBOS NO BANCO DE DADOS
+# 3 - BUSCAR OS SEBOS NO BANCO DE DADOS  (__________________________incompleto_________________________)
 #
 # Depois de conectar o MySQL, precisamos substituir os dados
 # fictícios da variável "sebos" por dados vindos do banco.
@@ -216,7 +216,7 @@ if __name__ == "__main__":
 # no projeto.
 #
 #
-# 5 - CADASTRO E LOGIN
+# 5 - CADASTRO E LOGIN  (__________________________FEITO_________________________)
 #
 # Precisamos desenvolver a parte lógica do cadastro e do login.
 #
@@ -266,7 +266,7 @@ if __name__ == "__main__":
 # preenchidos corretamente.
 #
 #
-# 10 - TESTAR TODAS AS FUNCIONALIDADES
+# 10 - TESTAR TODAS AS FUNCIONALIDADES   (__________________________incompleto_________________________)
 #
 # Depois que as funcionalidades forem desenvolvidas, precisamos
 # testar cada uma delas individualmente.
