@@ -5,13 +5,11 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Cadastro - Sebos Londrina</title>
+    <title>Sebos Londrina</title>
 
+    <!-- CSS -->
     <link
         rel="stylesheet"
         href="../static/style.css"
@@ -19,7 +17,13 @@
 
 </head>
 
+
 <body>
+
+
+    <!-- =====================================
+         CABEÇALHO
+    ====================================== -->
 
     <header class="header">
 
@@ -33,177 +37,568 @@
 
         </div>
 
+
         <nav class="navbar">
 
             <a href="index.html">
                 Início
             </a>
 
-            <a href="resultado.html">
+            <a href="#sebos">
                 Sebos
+            </a>
+
+            <a href="#avaliacoes">
+                Avaliações
+            </a>
+
+            <a href="perfil.html">
+                Meu Perfil
             </a>
 
         </nav>
 
+
+
+
     </header>
 
 
-    <main class="auth-page">
 
-        <section class="auth-card">
+    <!-- =====================================
+         CONTEÚDO PRINCIPAL
+    ====================================== -->
 
-            <div class="auth-header">
+    <main>
 
-                <div class="auth-icon">
-                    📚
-                </div>
+
+        <!-- HERO -->
+
+        <section class="hero">
+
+            <div class="hero-content">
 
                 <span class="hero-tag">
-                    NOVO USUÁRIO
+                    GUIA DE SEBOS DE LONDRINA
                 </span>
 
+
                 <h2>
-                    Criar sua conta
+
+                    Encontre o sebo
+
+                    <strong>
+                        ideal para você.
+                    </strong>
+
                 </h2>
 
+
                 <p>
-                    Faça parte da comunidade
-                    Sebos Londrina.
+
+                    Descubra sebos, compare preços,
+                    encontre livros e veja avaliações
+                    de outros leitores de Londrina.
+
                 </p>
 
-            </div>
 
+                <!-- PESQUISA -->
 
-            <form class="auth-form" onsubmit="validarCadastro(event)">
-
-                <div class="form-group">
-
-                    <label for="nome">
-                        Nome completo
-                    </label>
+                <form
+                    class="search-box"
+                    action="/pesquisar"
+                    method="GET"
+                >
 
                     <input
                         type="text"
-                        id="nome"
-                        name="nome"
-                        placeholder="Digite seu nome"
+                        name="busca"
+                        placeholder="Pesquise por livro, autor ou sebo..."
                         required
                     >
 
-                </div>
+
+                    <button type="submit">
+                        Pesquisar
+                    </button>
+
+                </form>
+
+            </div>
+
+        </section>
 
 
-                <div class="form-group">
 
-                    <label for="email">
-                        E-mail
-                    </label>
+        <!-- =====================================
+             CATEGORIAS
+        ====================================== -->
 
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        placeholder="seuemail@exemplo.com"
-                        required
-                    >
+        <section class="categories">
 
-                </div>
+            <div class="section-title">
 
+                <span>
+                    EXPLORE
+                </span>
 
-                <div class="form-group">
-
-                    <label for="senha">
-                        Senha
-                    </label>
-
-                    <input
-                        type="password"
-                        id="senha"
-                        name="senha"
-                        placeholder="Crie uma senha"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="confirmar_senha">
-                        Confirmar senha
-                    </label>
-
-                    <input
-                        type="password"
-                        id="confirmar_senha"
-                        name="confirmar_senha"
-                        placeholder="Digite a senha novamente"
-                        required
-                    >
-
-                </div>
-
-
-                <button
-                    type="submit"
-                    class="auth-button"
-                >
-
-                    Criar minha conta
-
-                </button>
-
-            </form>
-
-            <script>
-                function validarCadastro(event) {
-                    event.preventDefault();
-
-                    let nome = document.getElementById('nome').value;
-                    let email = document.getElementById('email').value;
-                    let senha = document.getElementById('senha').value;
-                    let confirmarSenha = document.getElementById('confirmar_senha').value;
-
-                    if (nome && email && senha && confirmarSenha) {
-                        if (senha === confirmarSenha) {
-                            window.location.href = 'login.html';
-                        } else {
-                            alert('As senhas não coincidem!');
-                        }
-                    } else {
-                        alert('Preencha todos os campos!');
-                    }
-                }
-            </script>
-
-            <div class="auth-footer">
-
-                <p>
-                    Já possui uma conta?
-                </p>
-
-                <a href="login.html">
-                    Fazer login
-                </a>
+                <h2>
+                    O que você está procurando?
+                </h2>
 
             </div>
 
 
-            <a
-                href="index.html"
-                class="back-link"
-            >
+            <div class="category-grid">
 
-                ← Voltar para o início
 
-            </a>
+                <div class="category-card">
+
+                    <div class="category-icon">
+                        📖
+                    </div>
+
+                    <h3>
+                        Livros
+                    </h3>
+
+                    <p>
+                        Encontre livros usados
+                        e raridades.
+                    </p>
+
+                </div>
+
+
+
+                <div class="category-card">
+
+                    <div class="category-icon">
+                        🏪
+                    </div>
+
+                    <h3>
+                        Sebos
+                    </h3>
+
+                    <p>
+                        Conheça os sebos
+                        de Londrina.
+                    </p>
+
+                </div>
+
+
+
+                <div class="category-card">
+
+                    <div class="category-icon">
+                        ⭐
+                    </div>
+
+                    <h3>
+                        Avaliações
+                    </h3>
+
+                    <p>
+                        Veja a opinião
+                        de outros leitores.
+                    </p>
+
+                </div>
+
+
+
+                <div class="category-card">
+
+                    <div class="category-icon">
+                        💰
+                    </div>
+
+                    <h3>
+                        Preços
+                    </h3>
+
+                    <p>
+                        Compare preços e encontre
+                        boas ofertas.
+                    </p>
+
+                </div>
+
+            </div>
 
         </section>
+
+
+
+        <!-- =====================================
+             SEBOS
+        ====================================== -->
+
+        <section
+            id="sebos"
+            class="sebos-section"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                   
+
+                    <h2>
+                        SEBOS EM DESTAQUE
+                    </h2>
+                    <span>
+                        Veja os sebos mais bem avalidos da sua cidade 
+                    </span>
+
+                </div>
+
+
+                <button class="view-all">
+                    Ver todos →
+                </button>
+
+            </div>
+
+
+            <div class="sebo-grid">
+
+
+                <!-- SEBO 1 -->
+
+                <article class="sebo-card">
+
+                    <div class="sebo-image">
+                        SEBO
+                    </div>
+
+
+                    <div class="sebo-info">
+
+                        <div class="rating">
+                            ★★★★★
+                            <span>4.8</span>
+                        </div>
+
+
+                        <h3>
+                            Sebo Exemplo
+                        </h3>
+
+
+                        <p class="location">
+                            📍 Centro, Londrina - PR
+                        </p>
+
+
+                        <p>
+                            Livros usados,
+                            raridades e literatura.
+                        </p>
+
+
+                        <button class="details-btn">
+                            Ver detalhes
+                        </button>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- SEBO 2 -->
+
+                <article class="sebo-card">
+
+                    <div class="sebo-image">
+                        SEBO
+                    </div>
+
+
+                    <div class="sebo-info">
+
+                        <div class="rating">
+                            ★★★★☆
+                            <span>4.5</span>
+                        </div>
+
+
+                        <h3>
+                            Livraria Exemplo
+                        </h3>
+
+
+                        <p class="location">
+                            📍 Zona Oeste, Londrina - PR
+                        </p>
+
+
+                        <p>
+                            Grande variedade de
+                            livros e coleções.
+                        </p>
+
+
+                        <button class="details-btn">
+                            Ver detalhes
+                        </button>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- SEBO 3 -->
+
+                <article class="sebo-card">
+
+                    <div class="sebo-image">
+                        SEBO
+                    </div>
+
+
+                    <div class="sebo-info">
+
+                        <div class="rating">
+                            ★★★★☆
+                            <span>4.3</span>
+                        </div>
+
+
+                        <h3>
+                            Sebo do Leitor
+                        </h3>
+
+
+                        <p class="location">
+                            📍 Londrina - PR
+                        </p>
+
+
+                        <p>
+                            Literatura, quadrinhos
+                            e livros acadêmicos.
+                        </p>
+
+
+                        <button class="details-btn">
+                            Ver detalhes
+                        </button>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================
+             AVALIAÇÕES
+        ====================================== -->
+
+        <section
+            id="avaliacoes"
+            class="reviews-section"
+        >
+
+            <div class="section-title">
+
+                <span>
+                    COMUNIDADE
+                </span>
+
+                <h2>
+                    O que os leitores dizem
+                </h2>
+
+            </div>
+
+
+            <div class="review-grid">
+
+
+                <div class="review-card">
+
+                    <div class="review-top">
+
+                        <div class="avatar">
+                            L
+                        </div>
+
+
+                        <div>
+
+                            <h3>
+                                Lucas
+                            </h3>
+
+                            <span>
+                                ★★★★★
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <p>
+                        "Encontrei livros que estava
+                        procurando há meses."
+                    </p>
+
+                </div>
+
+
+
+                <div class="review-card">
+
+                    <div class="review-top">
+
+                        <div class="avatar">
+                            M
+                        </div>
+
+
+                        <div>
+
+                            <h3>
+                                Marcos
+                            </h3>
+
+                            <span>
+                                ★★★★☆
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <p>
+                        "Gostei bastante da possibilidade
+                        de comparar diferentes sebos."
+                    </p>
+
+                </div>
+
+
+
+                <div class="review-card">
+
+                    <div class="review-top">
+
+                        <div class="avatar">
+                            A
+                        </div>
+
+
+                        <div>
+
+                            <h3>
+                                Ana
+                            </h3>
+
+                            <span>
+                                ★★★★★
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <p>
+                        "Uma ótima maneira de descobrir
+                        novos lugares para comprar livros."
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
 
     </main>
 
 
-    <footer>
+
+    <!-- =====================================
+         RODAPÉ
+    ====================================== -->
+
+    <footer id="sobre">
+
+        <div class="footer-content">
+
+            <div class="footer-brand">
+
+                <h2>
+                    📚 Sebos Londrina
+                </h2>
+
+
+                <p>
+                    Conectando leitores aos
+                    sebos de Londrina.
+                </p>
+
+            </div>
+
+
+            <div class="footer-links">
+
+                <div>
+
+                    <h3>
+                        Navegação
+                    </h3>
+
+                    <a href="/">
+                        Início
+                    </a>
+
+                    <a href="#sebos">
+                        Sebos
+                    </a>
+
+                    <a href="#avaliacoes">
+                        Avaliações
+                    </a>
+
+                </div>
+
+
+                <div>
+
+                    <h3>
+                        Projeto
+                    </h3>
+
+                    <a href="#sobre">
+                        Sobre nós
+                    </a>
+
+                    <a href="#">
+                        Contato
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
 
         <div class="copyright">
 
@@ -213,6 +608,7 @@
         </div>
 
     </footer>
+
 
 </body>
 

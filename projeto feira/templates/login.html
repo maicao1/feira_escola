@@ -74,7 +74,7 @@
             </div>
 
 
-            <form class="auth-form">
+            <form class="auth-form" onsubmit="validarLogin(event)">
 
                 <div class="form-group">
 
@@ -136,7 +136,7 @@
                    
                 >
 
-                    Criar minha conta
+                    Entrar
 
                 </button>
 
@@ -147,18 +147,18 @@
 
             <script>
 
-                function validarCadastro(event) {
+function validarLogin(event) {
     event.preventDefault();
 
-    let email = document.getElementById('email').value;
-    let senha = document.getElementById('senha').value;
+    let email = document.getElementById('email').value.trim();
+    let senha = document.getElementById('senha').value.trim();
 
-    // Se algum dos campos estiver vazio, avisa o usuário
-    if (email === '' && senha === '') {
-        alert('Preencha todos os campos!');
+    // Verifica se o e-mail OU a senha estão vazios
+    if (email === '' || senha === '') {
+        alert('Por favor, preencha todos os campos!');
     } else {
-        // Se estiverem preenchidos, redireciona
-        window.location.href = 'index.html';
+        // Se ambos estiverem preenchidos, redireciona
+        window.location.href = '../templates/index.html';
     }
 }
 
@@ -202,30 +202,7 @@
 
     </footer>
 
-    <script>
-        function validarCadastro(event) {
-            // Impede que a página recarregue ao enviar o formulário
-            event.preventDefault();
-
-            // Pega os valores digitados nos inputs
-            let nome = document.getElementById('nome').value;
-            let email = document.getElementById('email').value;
-            let senha = document.getElementById('senha').value;
-            let confirmarSenha = document.getElementById('confirmar_senha').value;
-
-            // Exemplo de verificação simples se estão preenchidos e se as senhas coincidem
-            if (nome && email && senha && confirmarSenha) {
-                if (senha === confirmarSenha) {
-                    // Se tudo estiver correto, redireciona para o login
-                    window.location.href = 'login.html';
-                } else {
-                    alert('As senhas não coincidem!');
-                }
-            } else {
-                alert('Preencha todos os campos!');
-            }
-        }
-    </script>
+    
 
 </body>
 
