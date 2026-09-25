@@ -1,156 +1,415 @@
-# Essa linha importa algumas ferramentas do Flask que vamos usar no nosso projeto.
-# O Flask cria a aplicação, o render_template
-# permite carregar nossas páginas HTML e o request permite receber informações enviadas pelo usuário.
+# ============================================================
+# IMPORTS
+# ============================================================
 
-from flask import Flask, render_template, request
+# Flask cria a aplicação.
+# render_template carrega os arquivos HTML.
+# request recebe dados enviados pelo usuário.
+# redirect redireciona para outra rota.
+# url_for gera a URL de uma rota.
+from flask import Flask, render_template, request, redirect, url_for
+
+# Biblioteca para conexão com MySQL.
+import mysql.connector
 
 
+# ============================================================
+# CRIAÇÃO DA APLICAÇÃO
+# ============================================================
 
-# Aqui estamos criando a aplicação Flask e armazenando ela na variável app.
-# O __name__ ajuda o Flask a identificar onde a aplicação está localizada.
 app = Flask(__name__)
 
 
-# ==========================================
-# DADOS TEMPORÁRIOS DOS SEBOS
-# ==========================================
+# ============================================================
+# CONFIGURAÇÃO DO MYSQL
+# ============================================================
+
+bd_config = {
+    'host': 'localhost',
+    'user': 'root',
+    'password': 'escola',
+    'database': 'feiraCiencias',
+    'ssl_disabled': True
+}
 
 
-# Aqui eu criei dados simples e fictícios para testar a funcionalidade da página.
-# Vamos mudar depois para os dados do banco de dados.
+# ============================================================
+# FUNÇÃO DE ACESSO AOS DADOS
+# ============================================================
 
-# Criei uma lista chamada sebos, que contém dicionários. 
-# Cada dicionário representa um sebo e guarda informações como nome, endereço, avaliação e telefone.
-sebos = [
-    {
-        "id": 1,
-        "nome": "Sebo Exemplo",
-        "local": "Centro, Londrina - PR",
-        "avaliacao": 4.8,
-        "descricao": "Livros usados, raridades e literatura.",
-        "telefone": "(43) 3333-3333",
-        "horario": "Segunda a sábado, 09h às 18h",
-        "endereco": "Rua Exemplo, 100 - Centro"
-    },
+def buscar_sebos():
 
-    {
-        "id": 2,
-        "nome": "Livraria Exemplo",
-        "local": "Zona Oeste, Londrina - PR",
-        "avaliacao": 4.5,
-        "descricao": "Grande variedade de livros e coleções.",
-        "telefone": "(43) 3444-4444",
-        "horario": "Segunda a sexta, 09h às 18h",
-        "endereco": "Avenida Exemplo, 200 - Zona Oeste"
-    },
+    try:
+        conexao = mysql.connector.connect(**bd_config)
 
-    {
-        "id": 3,
-        "nome": "Sebo do Leitor",
-        "local": "Londrina - PR",
-        "avaliacao": 4.3,
-        "descricao": "Literatura, quadrinhos e livros acadêmicos.",
-        "telefone": "(43) 3555-5555",
-        "horario": "Segunda a sábado, 10h às 19h",
-        "endereco": "Rua dos Livros, 300 - Londrina"
-    }
-]
+        curso = conexao.cursor(dictionary=True)
+
+        curso.execute("SELECT * FROM dadosSebos")
+
+        sebos = curso.fetchall()
+
+        curso.close()
+        conexao.close()
+
+        return sebos
+
+    except mysql.connector.Error as err:
+        print(f"Erro ao buscar sebos: {err}")
+        return []
 
 
-# ==========================================
+# ============================================================
 # PÁGINA INICIAL
-# ==========================================
-# Essa linha cria uma rota para a página inicial. O / representa o endereço principal
-# do nosso site e indica ao Flask qual função deve ser executada quando essa página for acessada.
-@app.route("/")
+# ============================================================
 
-# Aqui eu estou
-# criando uma função chamada inicio. Ela será executada quando a rota da página inicial for acessada.
+@app.route("/")
 def inicio():
 
-# Essa é a parte que efetivamente manda o HTML para o navegador.
-    return render_template(
-        "index.html"
-    )
+    try:
+
+        conexao = mysql.connector.connect(**bd_config)
+
+        curso = conexao.cursor(dictionary=True)
+
+        # Busca todos os sebos cadastrados
+        curso.execute("SELECT * FROM dadosSebos")
+
+        lista_sebos = curso.fetchall()
+
+        curso.close()
+        conexao.close()
+
+        return render_template(
+            "index.html",
+            sebos=lista_sebos
+        )
+
+    except mysql.connector.Error as err:
+
+        return f"Erro ao carregar a tabela: {err}"
 
 
-# ==========================================
+# ============================================================
+# SOBRE O PROJETO
+# ============================================================
+
+@app.route("/sobre")
+def sobre():
+
+    return render_template("sobre.html")
+
+
+# ============================================================
+# CADASTRAR SEBO
+# ============================================================
+
+@app.route("/cadastrar", methods=["POST"])
+def criar_cadastro():
+
+    try:
+
+        # ----------------------------------------------------
+        # RECEBE OS DADOS DO FORMULÁRIO
+        # ----------------------------------------------------
+
+        identificacao = request.form["id"]
+        nome = request.form["nome"]
+        localizacao = request.form["localizacao"]
+        avaliacao = request.form["avaliacao"]
+        descricao = request.form["descricao"]
+        telefone = request.form["telefone"]
+        horario = request.form["horario"]
+        endereco = request.form["endereco"]
+
+
+        # ----------------------------------------------------
+        # CONEXÃO COM O BANCO
+        # ----------------------------------------------------
+
+        conexao = mysql.connector.connect(**bd_config)
+
+        curso = conexao.cursor()
+
+
+        # ----------------------------------------------------
+        # INSERE O SEBO
+        # ----------------------------------------------------
+
+        query = """
+            INSERT INTO dadosSebos
+            (
+                id,
+                nome,
+                localizacao,
+                avaliacao,
+                descricao,
+                telefone,
+                horario,
+                endereco
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """
+
+        curso.execute(
+            query,
+            (
+                identificacao,
+                nome,
+                localizacao,
+                avaliacao,
+                descricao,
+                telefone,
+                horario,
+                endereco
+            )
+        )
+
+
+        # Salva a alteração no banco
+        conexao.commit()
+
+
+        # Fecha conexão
+        curso.close()
+        conexao.close()
+
+
+        # Volta para a página inicial
+        return redirect(url_for("inicio"))
+
+
+    except mysql.connector.Error as err:
+
+        return f"Erro ao gravar no banco: {err}"
+
+
+# ============================================================
+# EXCLUIR SEBO
+# ============================================================
+
+@app.route("/excluir/<int:id>")
+def excluir(id):
+
+    try:
+
+        conexao = mysql.connector.connect(**bd_config)
+
+        curso = conexao.cursor()
+
+
+        # ----------------------------------------------------
+        # EXCLUI O SEBO PELO ID
+        # ----------------------------------------------------
+
+        curso.execute(
+            "DELETE FROM dadosSebos WHERE id = %s",
+            (id,)
+        )
+
+
+        # Salva a alteração
+        conexao.commit()
+
+
+        curso.close()
+        conexao.close()
+
+
+        # Volta para a página inicial
+        return redirect(url_for("inicio"))
+
+
+    except mysql.connector.Error as err:
+
+        return f"Erro ao deletar: {err}"
+
+
+# ============================================================
 # PESQUISA
-# ==========================================
+# ============================================================
 
-# Essa rota é responsável pela pesquisa. Quando o usuário acessa /pesquisar,
-# o Flask chama a função pesquisar, que vai tratar o que foi pesquisado e mostrar os resultados.
 @app.route("/pesquisar")
-
-# Essa função recebe o que o usuário pesquisou através do request, guarda o termo na variável termo
-# e depois renderiza a página resultado.html, enviando para ela o termo pesquisado e a lista de sebos.
 def pesquisar():
+
+    # --------------------------------------------------------
+    # RECEBE O TERMO PESQUISADO
+    # --------------------------------------------------------
 
     termo = request.args.get(
         "busca",
         ""
     )
 
-    return render_template(
-        "resultado.html",
-        termo=termo,
-        sebos=sebos
-    )
+
+    # --------------------------------------------------------
+    # VALIDAÇÃO BÁSICA
+    # --------------------------------------------------------
+
+    LIMITE_CARACTERES_BUSCA = 100
+
+    termo = termo.strip()[:LIMITE_CARACTERES_BUSCA]
 
 
-# ==========================================
+    # --------------------------------------------------------
+    # PESQUISA NO MYSQL
+    # --------------------------------------------------------
+
+    try:
+
+        conexao = mysql.connector.connect(**bd_config)
+
+        curso = conexao.cursor(dictionary=True)
+
+
+        # O MySQL fará a pesquisa.
+        #
+        # Procuramos o termo em:
+        # - nome
+        # - localização
+        # - descrição
+
+        query = """
+            SELECT *
+            FROM dadosSebos
+            WHERE nome LIKE %s
+            OR localizacao LIKE %s
+            OR descricao LIKE %s
+        """
+
+
+        busca = "%" + termo + "%"
+
+
+        curso.execute(
+            query,
+            (
+                busca,
+                busca,
+                busca
+            )
+        )
+
+
+        resultados = curso.fetchall()
+
+
+        curso.close()
+        conexao.close()
+
+
+        # ----------------------------------------------------
+        # TRATAMENTO DA PESQUISA
+        # ----------------------------------------------------
+
+        mensagem = None
+
+
+        # Pesquisa vazia
+        if termo == "":
+
+            resultados = []
+
+            mensagem = "Digite um termo para pesquisar."
+
+
+        # Nenhum resultado
+        elif len(resultados) == 0:
+
+            mensagem = f'Nenhum sebo encontrado para "{termo}".'
+
+
+        # ----------------------------------------------------
+        # ENVIA PARA O HTML
+        # ----------------------------------------------------
+
+        return render_template(
+            "resultado.html",
+            termo=termo,
+            sebos=resultados,
+            mensagem=mensagem
+        )
+
+
+    except mysql.connector.Error as err:
+
+        return f"Erro ao pesquisar: {err}"
+
+
+# ============================================================
 # PÁGINA INDIVIDUAL DO SEBO
-# ==========================================
+# ============================================================
 
-
-# Essa rota mostra os detalhes de um sebo específico. 
-# O <int:id> recebe o ID do sebo pela URL, permitindo que o sistema saiba qual sebo deve ser mostrado.
 @app.route("/sebo/<int:id>")
-
-
-# Aqui eu crio a função que vai procurar e mostrar os detalhes do sebo.
-#  Ela recebe o ID que veio pela URL.
 def detalhes_sebo(id):
 
-    sebo_encontrado = None
+    # --------------------------------------------------------
+    # VALIDAÇÃO DO ID
+    # --------------------------------------------------------
 
-    # Procura o sebo pelo ID
-    for sebo in sebos:
+    if id <= 0:
 
-        if sebo["id"] == id:
-
-            sebo_encontrado = sebo
-
-            break
+        return "ID inválido", 404
 
 
-    # Se o sebo não existir
-    if sebo_encontrado is None:
+    try:
 
-        return "Sebo não encontrado", 404
+        conexao = mysql.connector.connect(**bd_config)
 
-
-    # Envia os dados para o HTML
-    return render_template(
-        "sebo.html",
-        sebo=sebo_encontrado
-    )
+        curso = conexao.cursor(dictionary=True)
 
 
-# ==========================================
+        # ----------------------------------------------------
+        # PROCURA O SEBO PELO ID
+        # ----------------------------------------------------
+
+        curso.execute(
+            """
+            SELECT *
+            FROM dadosSebos
+            WHERE id = %s
+            """,
+            (id,)
+        )
+
+
+        sebo_encontrado = curso.fetchone()
+
+
+        curso.close()
+        conexao.close()
+
+
+        # ----------------------------------------------------
+        # SE NÃO EXISTIR
+        # ----------------------------------------------------
+
+        if sebo_encontrado is None:
+
+            return "Sebo não encontrado", 404
+
+
+        # ----------------------------------------------------
+        # ENVIA PARA O HTML
+        # ----------------------------------------------------
+
+        return render_template(
+            "sebo.html",
+            sebo=sebo_encontrado
+        )
+
+
+    except mysql.connector.Error as err:
+
+        return f"Erro ao carregar sebo: {err}"
+
+
+# ============================================================
 # INICIAR SERVIDOR
-# ==========================================
-
-
-# Essa parte verifica se o arquivo está sendo executado diretamente. Se estiver, o app.run() 
-# inicia o servidor Flask.
-#  O debug=True ativa o modo de desenvolvimento para facilitar os testes e identificar erros.
+# ============================================================
 
 if __name__ == "__main__":
 
-    app.run(
-        debug=True
-    )
+    app.run(debug=True)
 # ============================================================
 # GUIA PARA CONTINUARMOS O BACK-END DO PROJETO
 # ============================================================
