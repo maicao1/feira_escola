@@ -74,7 +74,7 @@
             </div>
 
 
-            <form class="auth-form" onsubmit="validarCadastro(event)">
+            <form class="auth-form" action="/cadastro" method="POST" onsubmit="return validarCadastro(event)">
 
                 <div class="form-group">
 
@@ -156,24 +156,20 @@
             </form>
 
             <script>
-                function validarCadastro(event) {
-                    event.preventDefault();
+               
+function validarCadastro(event) {
+    const senha = document.getElementById('senha').value;
+    const confirmarSenha = document.getElementById('confirmar_senha').value;
 
-                    let nome = document.getElementById('nome').value;
-                    let email = document.getElementById('email').value;
-                    let senha = document.getElementById('senha').value;
-                    let confirmarSenha = document.getElementById('confirmar_senha').value;
+    if (senha !== confirmarSenha) {
+        event.preventDefault();
+        alert('As senhas não coincidem!');
+        return false;
+    }
 
-                    if (nome && email && senha && confirmarSenha) {
-                        if (senha === confirmarSenha) {
-                            window.location.href = 'login.html';
-                        } else {
-                            alert('As senhas não coincidem!');
-                        }
-                    } else {
-                        alert('Preencha todos os campos!');
-                    }
-                }
+    return true;
+}
+
             </script>
 
             <div class="auth-footer">

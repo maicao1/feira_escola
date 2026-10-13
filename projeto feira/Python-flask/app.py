@@ -1,14 +1,6 @@
-# ============================================================
-# IMPORTS
-# ============================================================
 
-# Flask cria a aplicação.
-# render_template carrega os arquivos HTML.
-# request recebe dados enviados pelo usuário.
-# redirect redireciona para outra rota.
-# url_for gera a URL de uma rota.
 from flask import Flask, render_template, request, redirect, url_for
-
+from werkzeug.security import generate_password_hash
 # Biblioteca para conexão com MySQL.
 import mysql.connector
 
@@ -402,181 +394,141 @@ def detalhes_sebo(id):
 
         return f"Erro ao carregar sebo: {err}"
 
+//
+
+
+# ============================================================
+# CADASTRO DE USUÁRIOS
+# ============================================================
+
+@app.route("/cadastro", methods=["GET", "POST"])
+def cadastro_usuario():
+
+    if request.method == "GET":
+        return render_template("cadastro.html")
+
+    nome = request.form.get("nome", "").strip()
+    email = request.form.get("email", "").strip().lower()
+    senha = request.form.get("senha", "")
+    confirmar_senha = request.form.get("confirmar_senha", "")
+
+    if not nome or not email or not senha or not confirmar_senha:
+        return "Preencha todos os campos!", 400
+
+    if senha != confirmar_senha:
+        return "As senhas não coincidem!", 400
+
+    senha_hash = generate_password_hash(senha)
+
+    conexao = None
+    curso = None
+
+    try:
+        conexao = mysql.connector.connect(**bd_config)
+        curso = conexao.cursor()
+
+        query = """
+            INSERT INTO usuarios (nome, email, senha_hash)
+            VALUES (%s, %s, %s)
+        """
+
+        curso.execute(query, (nome, email, senha_hash))
+        conexao.commit()
+
+        return redirect(url_for("pagina_login"))
+
+    except mysql.connector.IntegrityError:
+        return "Este e-mail já está cadastrado.", 409
+
+    except mysql.connector.Error as err:
+        app.logger.error("Erro ao cadastrar usuário: %s", err)
+        return "Não foi possível concluir o cadastro.", 500
+
+    finally:
+        if curso is not None:
+            curso.close()
+
+        if conexao is not None and conexao.is_connected():
+            conexao.close()
+
+
+# ============================================================
+# PÁGINA DE LOGIN
+# ============================================================
+
+@app.route("/login")
+def pagina_login():
+    return render_template("login.html")
+
 
 # ============================================================
 # INICIAR SERVIDOR
 # ============================================================
+//
 
+
+@app.route("/cadastro", methods=["GET", "POST"])
+def cadastro_usuario():
+
+    if request.method == "GET":
+        return render_template("cadastro.html")
+
+    nome = request.form.get("nome", "").strip()
+    email = request.form.get("email", "").strip().lower()
+    senha = request.form.get("senha", "")
+    confirmar_senha = request.form.get("confirmar_senha", "")
+
+    if not nome or not email or not senha or not confirmar_senha:
+        return "Preencha todos os campos!", 400
+
+    if senha != confirmar_senha:
+        return "As senhas não coincidem!", 400
+
+    if len(senha) < 8:
+        return "A senha deve ter pelo menos 8 caracteres.", 400
+
+    senha_hash = generate_password_hash(senha)
+
+    conexao = None
+    curso = None
+
+    try:
+        conexao = mysql.connector.connect(**bd_config)
+        curso = conexao.cursor()
+
+        curso.execute(
+            """
+            INSERT INTO usuarios (nome, email, senha_hash)
+            VALUES (%s, %s, %s)
+            """,
+            (nome, email, senha_hash)
+        )
+
+        conexao.commit()
+
+        return redirect(url_for("pagina_login"))
+
+    except mysql.connector.IntegrityError:
+        return "Este e-mail já está cadastrado.", 409
+
+    except mysql.connector.Error:
+        app.logger.exception("Erro ao cadastrar usuário")
+        return "Não foi possível concluir o cadastro.", 500
+
+    finally:
+        if curso is not None:
+            curso.close()
+
+        if conexao is not None and conexao.is_connected():
+            conexao.close()
+
+
+@app.route("/login")
+def pagina_login():
+    return render_template("login.html")
+
+
+//
 if __name__ == "__main__":
 
     app.run(debug=True)
-# ============================================================
-# GUIA PARA CONTINUARMOS O BACK-END DO PROJETO
-# ============================================================
-
-# Pessoal, até aqui nós já fizemos a estrutura inicial do nosso
-# back-end utilizando Flask e já conseguimos conectar o Python
-# com as páginas HTML do nosso projeto.
-#
-# Os dados dos sebos que estão neste arquivo são apenas dados
-# temporários e fictícios que usamos para testar o funcionamento.
-# Eles serão substituídos pelos dados reais do banco de dados.
-#
-# A partir daqui, precisamos continuar o desenvolvimento juntos
-# e dividir as próximas etapas entre a equipe.
-#
-#
-# PRÓXIMOS PASSOS DO BACK-END:
-#
-# 1 - CONECTAR O PYTHON AO MYSQL               (__________________________FEITO_________________________)
-#
-# Primeiro precisamos fazer a conexão entre o Flask e o banco
-# de dados MySQL que a equipe está desenvolvendo.
-#
-# Depois da conexão, não vamos mais precisar deixar todos os
-# dados dos sebos escritos diretamente nesta lista do Python.
-#
-#
-# 2 - CRIAR E ORGANIZAR AS TABELAS DO BANCO (__________________________FEITO_________________________)
-#
-# Precisamos definir junto com a equipe quais informações serão
-# armazenadas no banco de dados.
-#
-# Por exemplo:
-# - Sebos
-# - Usuários
-# - Avaliações
-# - Livros
-# - Categorias
-#
-# A estrutura final deve ser decidida junto com a modelagem
-# do banco de dados que a equipe está fazendo.
-#
-#
-# 3 - BUSCAR OS SEBOS NO BANCO DE DADOS  (__________________________incompleto_________________________)
-#
-# Depois de conectar o MySQL, precisamos substituir os dados
-# fictícios da variável "sebos" por dados vindos do banco.
-#
-# Assim, quando o usuário pesquisar, o Python poderá consultar
-# o banco e mostrar os sebos cadastrados de verdade.
-#
-#
-# 4 - MELHORAR A PESQUISA
-#
-# Atualmente a rota "/pesquisar" recebe o termo pesquisado,
-# mas ainda estamos mostrando nossa lista temporária.
-#
-# Precisamos fazer a pesquisa realmente verificar os dados
-# cadastrados no banco.
-#
-# Também podemos pensar em filtros, como localização, avaliação,
-# tipo de livro ou outras informações que decidirmos colocar
-# no projeto.
-#
-#
-# 5 - CADASTRO E LOGIN  (__________________________FEITO_________________________)
-#
-# Precisamos desenvolver a parte lógica do cadastro e do login.
-#
-# O usuário deverá poder criar uma conta e depois entrar no
-# sistema utilizando seus dados.
-#
-# Essas informações deverão ser armazenadas no banco de dados.
-#
-#
-# 6 - ÁREA DO USUÁRIO
-#
-# Depois do login, precisamos criar a lógica da área do usuário.
-#
-# Nela poderemos mostrar informações do usuário e, dependendo
-# do que decidirmos para o projeto, permitir que ele veja ou
-# altere seus dados e suas avaliações.
-#
-#
-# 7 - AVALIAÇÕES DOS SEBOS
-#
-# Uma das principais funcionalidades do nosso projeto será
-# permitir que os usuários avaliem os sebos.
-#
-# Precisamos criar a lógica para:
-# - receber a avaliação;
-# - identificar o usuário;
-# - identificar o sebo;
-# - salvar a avaliação no banco;
-# - mostrar as avaliações na página do sebo.
-#
-#
-# 8 - DETALHES DOS SEBOS
-#
-# A rota "/sebo/<int:id>" já foi criada e atualmente funciona
-# utilizando nossos dados temporários.
-#
-# Depois da integração com o banco, essa rota deverá buscar
-# o sebo pelo ID diretamente no MySQL.
-#
-#
-# 9 - VALIDAR OS DADOS
-#
-# Precisamos verificar os dados enviados pelos usuários antes
-# de salvar qualquer informação no banco.
-#
-# Por exemplo, verificar se os campos obrigatórios foram
-# preenchidos corretamente.
-#
-#
-# 10 - TESTAR TODAS AS FUNCIONALIDADES   (__________________________incompleto_________________________)
-#
-# Depois que as funcionalidades forem desenvolvidas, precisamos
-# testar cada uma delas individualmente.
-#
-# Vamos verificar principalmente:
-# - cadastro;
-# - login;
-# - pesquisa;
-# - detalhes do sebo;
-# - avaliações;
-# - navegação entre as páginas;
-# - possíveis erros.
-#
-#
-# 11 - ORGANIZAR E CORRIGIR O CÓDIGO
-#
-# Depois que tudo estiver funcionando, precisamos revisar o
-# código, organizar os arquivos e corrigir possíveis problemas.
-#
-# Também devemos manter os comentários importantes para que
-# todos da equipe consigam entender o que foi feito.
-#
-#
-# 12 - INTEGRAR TUDO
-#
-# No final, precisamos garantir que:
-#
-# HTML/CSS
-#     ↓
-# Flask / Python
-#     ↓
-# MySQL
-#
-# estejam funcionando juntos.
-#
-# O usuário deverá conseguir utilizar o site normalmente,
-# enquanto o Python ficará responsável pela lógica e o MySQL
-# pelo armazenamento dos dados.
-#
-#
-# OBJETIVO FINAL
-#
-# Nosso objetivo é entregar um site funcional sobre os sebos
-# de Londrina, permitindo que o usuário encontre sebos e veja
-# qual deles atende melhor às suas necessidades.
-#
-# O front-end já está estruturado.
-# O Flask já está funcionando.
-# Agora precisamos construir o restante do back-end juntos,
-# integrar o banco de dados e testar o produto final.
-#
-# Vamos fazendo cada etapa juntos para que todo mundo da equipe
-# entenda uma parte do projeto e consiga ajudar no desenvolvimento.
-# ============================================================
